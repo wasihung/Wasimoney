@@ -906,11 +906,18 @@ async function cloudSave(immediate) {
   const client = getSupabase();
   if (!client) { setSyncUI('offline', 'Offline (no connection)'); isSyncing = false; return; }
   try {
-    const { error } = await client.from('finance_data').upsert({
-      id: ROW_ID,
-      data: appData,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'id' });
+    const { data, error } = await client
+  .from('finance_data')
+  .upsert({
+    id: ROW_ID,
+    data: appData,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'id' })
+  .select();
+
+console.log('data:', data);
+console.log('error:', error);
+
 
     if (error) throw error;
 
